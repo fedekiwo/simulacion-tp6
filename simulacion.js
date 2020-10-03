@@ -22,23 +22,30 @@ const emptyInstance = (i) => {
     return i;
   }
   else {
-    orderedAvailableIndexes[0];
+    orderedAvailableIndexes(messagesProcessedPerInstance)[0];
   }
 };
 
 const arrival = () => {
+  console.log("LLEGADA");
+
   t = tpll;
   tpll += IA();
   ns++;
 
   if(ns <= N) {
     const emptyInstanceIndex = emptyInstance(nextInstanceIndex());
+    console.log("Mensajes procesados por instancia: ", messagesProcessedPerInstance);
+    console.log("Instancia seleccionada", emptyInstanceIndex);
+
     tps[emptyInstanceIndex] = TA();
     messagesProcessedPerInstance[emptyInstanceIndex]++;
   }
 }
 
 const exit = (i) => {
+  console.log(`SALIDA(${i})`);
+
   t = tps[i];
   ns--;
 
@@ -51,8 +58,16 @@ const exit = (i) => {
   }
 }
 
+const initIterationLog = (nextTpsIndex) => {
+  console.log("T: ", t);
+  console.log("TPLL: ", tpll);
+  console.log("TPS: ", tps);
+  console.log(`TPS(${nextTpsIndex}) : ${tps[nextTpsIndex]}`);
+}
+
 while(t < TF || ns > 0) {
   let nextTpsIndex = minIndex();
+  initIterationLog(nextTpsIndex);
 
   if(tpll <= tps[nextTpsIndex]) {
     arrival();
