@@ -1,14 +1,33 @@
 const _ = require("lodash");
 
-const IA = () => {
-  const R = Math.random();
-  return 1
-};
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 
-const TA = () => { 
-  const R = Math.random();
-  return 1
-};
+const HIGH_VALUE = Number.MAX_SAFE_INTEGER;
+
+const getRandom = () => {
+  let R = 1;
+  while(R === 1) {
+    R = Math.random();
+  }
+
+  return R;
+}
+
+const fdpResolver = (name, divider) => {
+  const R = getRandom();
+  const value = Math.log(1 - R) / divider;
+
+  console.log(`${name}: ${value}, Random: ${R}`);
+  return value;
+}; 
+
+const IA = () => fdpResolver("IA", -0.1794);
+
+const TA = () => fdpResolver("TA", -0.0088);
 
 const indexOfMin = (list) => list.indexOf(_.min(list));
 
@@ -17,13 +36,19 @@ const getAllIndexes = (arr) => (val) => {
   while ((i = arr.indexOf(val, i+1)) != -1){
       indexes.push(i);
   }
+  console.log("INDEXES", val, indexes);
   return indexes;
 }
 
-const orderedAvailableIndexes = (arr) => {
-  return _.uniq(arr)
-  .map(getAllIndexes(arr))
-  .flatMap(indexesArray => indexesArray.filter(i => arr[i] == HIGH_VALUE))
+const orderedAvailableIndexes = (messagesProcessedPerInstance, tps) => {
+  // console.log("ARRAY LOCOOO", _(arr).uniq()
+  // .map(getAllIndexes(arr))
+  // .flatMap(indexesArray => indexesArray.filter(i => arr[i] == HIGH_VALUE)).value());
+  return _(messagesProcessedPerInstance).uniq()
+  .orderBy(_.identity)
+  .map(getAllIndexes(messagesProcessedPerInstance))
+  .flatMap(indexesArray => indexesArray.filter(i => tps[i] == HIGH_VALUE))
+  .value();
 }
 
 module.exports = {
@@ -33,5 +58,6 @@ module.exports = {
   getAllIndexes,
   orderedAvailableIndexes, 
   indexOfMin,
-  HIGH_VALUE: Number.MAX_SAFE_INTEGER
+  HIGH_VALUE,
+  sleep
 };
