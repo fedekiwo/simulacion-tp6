@@ -12,18 +12,19 @@ const COST = 0.1;
 // Condiciones iniciales
 let t = 0, tpll = 0, ns  = 0;
 let tps = _.times(N, _.constant(HIGH_VALUE));
+let messagesAssignedPerInstance = _.times(N, _.constant(0));
 let messagesProcessedPerInstance = _.times(N, _.constant(0));
 
 const minIndex = () => indexOfMin(tps);
-const nextInstanceIndex = () => indexOfMin(messagesProcessedPerInstance);
+const nextInstanceIndex = () => indexOfMin(messagesAssignedPerInstance);
 
 const emptyInstance = (i) => {
   if(tps[i] === HIGH_VALUE) {
     return i;
   }
   else {
-    console.log("asdfasdfasdfasd", orderedAvailableIndexes(messagesProcessedPerInstance, tps));
-    const emptyInstanceIndex = orderedAvailableIndexes(messagesProcessedPerInstance, tps)[0];
+    // console.log("asdfasdfasdfasd", orderedAvailableIndexes(messagesAssignedPerInstance, tps));
+    const emptyInstanceIndex = orderedAvailableIndexes(messagesAssignedPerInstance, tps)[0];
 
     return emptyInstanceIndex;
   }
@@ -39,9 +40,9 @@ const arrival = () => {
   if(ns <= N) {
     
     const emptyInstanceIndex = emptyInstance(nextInstanceIndex());
-    messagesProcessedPerInstance[emptyInstanceIndex]++;
+    messagesAssignedPerInstance[emptyInstanceIndex]++;
 
-    console.log("Mensajes procesados por instancia: ", messagesProcessedPerInstance);
+    console.log("Mensajes asignados por instancia: ", messagesAssignedPerInstance);
     console.log("Instancia seleccionada", emptyInstanceIndex);
 
     tps[emptyInstanceIndex] = t + TA();
@@ -53,10 +54,11 @@ const exit = (i) => {
 
   t = tps[i];
   ns--;
+  messagesProcessedPerInstance[i]++;
 
   if(ns >= N) {
     tps[i] = t + TA();
-    messagesProcessedPerInstance[i]++;
+    messagesAssignedPerInstance[i]++;
   }
   else {
     tps[i] = HIGH_VALUE;
@@ -70,9 +72,10 @@ const initIterationLog = (nextTpsIndex) => {
   console.log(`TPS(${nextTpsIndex}) : ${tps[nextTpsIndex]}`);
 }
 
-// async function simulation() {
+// async function simulation() { // Para debuggearlo mejor
 function simulation() {
-  while(t < TF || ns > 0) {
+  // while(t < TF || ns > 0) { // Vaciamiento
+  while(t < TF) {
     let nextTpsIndex = minIndex();
     initIterationLog(nextTpsIndex);
   
@@ -83,10 +86,11 @@ function simulation() {
       exit(nextTpsIndex)
     }
   
-    if(t >= TF && ns > 0){
-      tpll = HIGH_VALUE;
-    }
-    //await sleep(1000);
+    // if(t >= TF && ns > 0){ // Vaciamiento
+    //   tpll = HIGH_VALUE;
+    // }
+
+    //await sleep(1000); // Para debuggearlo mejor
   }
 }
 
@@ -95,4 +99,5 @@ simulation();
 
 // mostrar resultados.
 console.log("Instancias: ", N);
+console.log("Mensajes Procesados: ", _.sum(messagesProcessedPerInstance));
 console.log("Mensajes Procesados: ", _.sum(messagesProcessedPerInstance));
