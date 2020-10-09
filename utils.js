@@ -41,9 +41,6 @@ const getAllIndexes = (arr) => (val) => {
 }
 
 const orderedAvailableIndexes = (messagesProcessedPerInstance, tps) => {
-  // console.log("ARRAY LOCOOO", _(arr).uniq()
-  // .map(getAllIndexes(arr))
-  // .flatMap(indexesArray => indexesArray.filter(i => arr[i] == HIGH_VALUE)).value());
   return _(messagesProcessedPerInstance).uniq()
   .orderBy(_.identity)
   .map(getAllIndexes(messagesProcessedPerInstance))
